@@ -8,7 +8,10 @@ install:
 	./gradlew installDist
 
 start:
-	./gradlew run
+	./gradlew bootRun --args='--spring.profiles.active=dev'
+
+start-prod:
+	./gradlew bootRun --args='--spring.profiles.active=prod'
 
 start-dist:
 	./build/install/app/bin/app
@@ -25,3 +28,8 @@ report:
 check-updates:
 	./gradlew dependencyUpdates
 
+generate-migrations:
+	gradle diffChangeLog
+
+db-migrate:
+	./gradlew update
