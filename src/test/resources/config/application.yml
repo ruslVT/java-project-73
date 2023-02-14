@@ -1,11 +1,11 @@
-server:
-  port: ${PORT:5000}
-
-base-url: /api
+base-url: ""
 
 spring:
   application:
     name: taskManager
+
+  jpa:
+    show-sql: true
 
   liquibase:
     enabled: true
@@ -16,6 +16,6 @@ spring:
       filter:
         enabled: true
 
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
+logging:
+  level:
+    root: INFO
