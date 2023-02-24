@@ -3,63 +3,69 @@ package hexlet.code.service;
 import hexlet.code.dto.UserDto;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Arrays;
+import static hexlet.code.config.security.SecurityConfig.DEFAULT_AUTHORITIES;
 
 @Service
-public class UserServiceImpl implements UserService {
+@Transactional
+@AllArgsConstructor
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private final SecureRandom secureRandom = new SecureRandom();
-    private final byte[] salt = new byte[16];
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void createNewUser(final UserDto userDto) {
-
-        User user = new User();
+    public User createNewUser(final UserDto userDto) {
+        final User user = new User();
+        user.setEmail(userDto.getEmail());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(getPasswordHash(userDto.getPassword()));
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userRepository.save(user);
     }
 
     @Override
-    public void updateUser(long id, UserDto userDto) {
-
-        User userForUpdate = userRepository.findById(id).get();
-
+    public User updateUser(final long id, final UserDto userDto) {
+        final User userForUpdate = userRepository.findById(id).get();
+        userForUpdate.setEmail(userDto.getEmail());
         userForUpdate.setFirstName(userDto.getFirstName());
         userForUpdate.setLastName(userDto.getLastName());
-        userForUpdate.setEmail(userDto.getEmail());
-        userForUpdate.setPassword(getPasswordHash(userDto.getPassword()));
-        userRepository.save(userForUpdate);
-
+        userForUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        return userRepository.save(userForUpdate);
     }
 
-    private String getPasswordHash(String pass) {
+    @Override
+    public String getCurrentUserName() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 
-        try {
-            secureRandom.nextBytes(salt);
-            KeySpec spec = new PBEKeySpec(pass.toCharArray(), salt, 65536, 128);
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            byte[] hash = factory.generateSecret(spec).getEncoded();
-            return Arrays.toString(hash);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.getCause();
-            return null;
-        }
+    @Override
+    public User getCurrentUser() {
+        return userRepository.findByEmail(getCurrentUserName()).get();
+    }
 
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username)
+                .map(this::buildSpringUser)
+                .orElseThrow(() -> new UsernameNotFoundException("Not found user with 'username': " + username));
+    }
+
+    private UserDetails buildSpringUser(final User user) {
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                DEFAULT_AUTHORITIES
+        );
     }
 
 }

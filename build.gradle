@@ -9,15 +9,14 @@ plugins {
 	id 'org.liquibase.gradle' version '2.0.4'
 	// Плагины для swagger
 	// Позволяют получить сгенерированную документацию по API в виде json файла
-	id 'org.springdoc.openapi-gradle-plugin' version '1.3.3'
-	id 'com.github.johnrengelman.processes' version '0.5.0'
+	//id 'org.springdoc.openapi-gradle-plugin' version '1.3.3'
+	//id 'com.github.johnrengelman.processes' version '0.5.0'
 	// Сборщик фронтенда
 	id 'org.siouan.frontend-jdk11' version '6.0.0'
 }
 
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = '17'
 
 application {
 	mainClass = 'hexlet.code.AppApplication'
@@ -48,11 +47,11 @@ dependencies {
 			'org.springframework.boot:spring-boot-starter-web',
 			'org.springframework.boot:spring-boot-starter-actuator',
 			'org.springframework.boot:spring-boot-starter-validation',
-			//'org.springframework.boot:spring-boot-starter-security',
+			'org.springframework.boot:spring-boot-starter-security',
 			'io.jsonwebtoken:jjwt:0.9.1',
 			// Зависимость для swagger
 			// Позволяет сгенерировать и проматривать интерактивную документацию по API
-			'org.springdoc:springdoc-openapi-ui:1.5.12',
+			//'org.springdoc:springdoc-openapi-ui:1.5.12',
 			'org.liquibase:liquibase-core:4.6.1',
 			'com.querydsl:querydsl-core:5.0.0',
 			'com.querydsl:querydsl-jpa:5.0.0',
@@ -73,9 +72,15 @@ dependencies {
 
 	testImplementation(
 			'org.springframework.boot:spring-boot-starter-test',
-			//'org.springframework.boot:spring-boot-starter-security',
+			'org.springframework.boot:spring-boot-starter-security',
+			'org.springframework.security:spring-security-test:5.5.1',
 			'com.tobedevoured.modelcitizen:spring:0.8.3'
 	)
+}
+
+wrapper {
+	gradleVersion = '7.4.2'
+	distributionType = Wrapper.DistributionType.ALL
 }
 
 test {
@@ -119,3 +124,36 @@ liquibase {
 		}
 	}
 }
+
+// Сборка фронтенда.
+// Выполняется только если ничего не изменилось.
+// *****************************************************************************
+frontend {
+	nodeVersion = '16.13.1'
+	installScript = 'install'
+	assembleScript = 'run build'
+	packageJsonDirectory = file("${projectDir}/frontend")
+}
+
+def configFrontendTasks = {
+	inputs.files(fileTree("$projectDir/frontend").exclude('build', 'node_modules'))
+	outputs.dir("$buildDir/resources/main/static")
+}
+
+assembleFrontend {
+	configure configFrontendTasks
+
+	doLast {
+		copy {
+			from "$projectDir/frontend/build"
+			into "$buildDir/resources/main/static"
+		}
+	}
+}
+
+installFrontend {
+	configure configFrontendTasks
+}
+
+processResources.dependsOn assembleFrontend
+// *****************************************************************************

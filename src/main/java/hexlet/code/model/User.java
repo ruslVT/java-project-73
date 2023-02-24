@@ -31,14 +31,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String email;
+
     @NotBlank
     private String firstName;
 
     @NotBlank
     private String lastName;
-
-    @Column(unique = true)
-    private String email;
 
     @NotBlank
     @JsonIgnore
@@ -47,4 +47,8 @@ public class User {
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+
+    public User(final Long id) {
+        this.id = id;
+    }
 }

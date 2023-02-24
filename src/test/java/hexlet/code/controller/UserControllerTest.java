@@ -54,11 +54,19 @@ public class UserControllerTest {
     }
 
     @Test
+    public void registration() throws Exception {
+        assertEquals(0, userRepository.count());
+        utils.regDefaultUser();
+        assertEquals(1, userRepository.count());
+    }
+
+    @Test
     public void getUserById() throws Exception {
 
         utils.regDefaultUser();
         final User expectedUser = userRepository.findAll().get(0);
-        final var response = utils.perform(get(USER_CONTROLLER_PATH + ID, expectedUser.getId()))
+        final var response = utils.perform(get(USER_CONTROLLER_PATH + ID, expectedUser.getId()),
+                        expectedUser.getEmail())
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -93,16 +101,16 @@ public class UserControllerTest {
         final Long id = userRepository.findByEmail(TEST_EMAIL).get().getId();
 
         UserDto expectDto = new UserDto(
+                "update@mail.ru",
                 "updateFName",
                 "updateLName",
-                "update@mail.ru",
                 "updatePass");
 
         final var request = put(USER_CONTROLLER_PATH + ID, id)
                 .content(asJson(expectDto))
                 .contentType(APPLICATION_JSON);
 
-        utils.perform(request).andExpect(status().isOk());
+        utils.perform(request, TEST_EMAIL).andExpect(status().isOk());
 
         final User actualUser = userRepository.findById(id).get();
         assertThat(actualUser.getFirstName()).isEqualTo(expectDto.getFirstName());
@@ -119,7 +127,7 @@ public class UserControllerTest {
         assertEquals(1, userRepository.count());
 
         final var request = delete(USER_CONTROLLER_PATH + ID, id);
-        utils.perform(request).andExpect(status().isOk());
+        utils.perform(request, TEST_EMAIL).andExpect(status().isOk());
 
         assertEquals(0, userRepository.count());
     }
