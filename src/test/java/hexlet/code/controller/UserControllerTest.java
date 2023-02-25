@@ -15,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
@@ -48,9 +47,6 @@ public class UserControllerTest {
 
     @Autowired
     private TestUtils utils;
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @AfterEach
     public void clear() {
@@ -178,12 +174,12 @@ public class UserControllerTest {
     @Test
     public void deleteUser() throws Exception {
         utils.regDefaultUser();
-        final Long id = userRepository.findByEmail(TEST_EMAIL).get().getId();
+        final User user = userRepository.findAll().get(0);
 
         assertEquals(1, userRepository.count());
 
-        final var request = delete(USER_CONTROLLER_PATH + ID, id);
-        utils.perform(request, TEST_EMAIL).andExpect(status().isOk());
+        final var request = delete(USER_CONTROLLER_PATH + ID, user.getId());
+        utils.perform(request, user.getEmail()).andExpect(status().isOk());
 
         assertEquals(0, userRepository.count());
     }
