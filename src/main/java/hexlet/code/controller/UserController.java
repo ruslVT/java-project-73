@@ -22,8 +22,8 @@ import java.util.List;
 import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpStatus.CREATED;
 
-@AllArgsConstructor
 @RestController
+@AllArgsConstructor
 @RequestMapping("${base-url}" + USER_CONTROLLER_PATH)
 public class UserController {
     public static final String USER_CONTROLLER_PATH = "/users";
@@ -37,7 +37,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public User registerNew(@RequestBody @Valid final UserDto userDto) {
+    public User registerNewUser(@RequestBody @Valid final UserDto userDto) {
         return userService.createNewUser(userDto);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAll() {
+    public List<User> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .toList();
@@ -55,7 +55,7 @@ public class UserController {
 
     @PutMapping(ID)
     @PreAuthorize(ONLY_OWNER_BY_ID)
-    public User update(@PathVariable final long id, @RequestBody @Valid final UserDto userDto) {
+    public User updateUser(@PathVariable final long id, @RequestBody @Valid final UserDto userDto) {
         return userService.updateUser(id, userDto);
     }
 
