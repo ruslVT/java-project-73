@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import hexlet.code.config.SpringConfigForTest;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.model.TaskStatus;
@@ -22,9 +23,11 @@ import static hexlet.code.controller.TaskStatusController.STATUS_CONTROLLER_PATH
 import static hexlet.code.utils.TestUtils.TEST_EMAIL;
 import static hexlet.code.utils.TestUtils.TEST_STATUS;
 import static hexlet.code.utils.TestUtils.asJson;
+import static hexlet.code.utils.TestUtils.fromJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -45,7 +48,7 @@ public class TaskStatusControllerTest {
     private TestUtils utils;
 
     @BeforeEach
-    public void regUser() throws Exception {
+    public void beforeEach() throws Exception {
         utils.regDefaultUser();
     }
 
@@ -55,7 +58,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void createStatus() throws Exception {
+    public void createStatusTest() throws Exception {
         utils.addDefaultStatus()
                 .andExpect(status().isCreated());
 
@@ -66,26 +69,43 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void updateStatus() throws Exception {
+    public void getStatusByIdTest() throws Exception {
+        utils.addDefaultStatus();
+        assertEquals(1, taskStatusRepository.count());
+
+        final Long id = taskStatusRepository.findAll().get(0).getId();
+        final var request = get(STATUS_CONTROLLER_PATH + ID, id);
+        final var response = utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        final TaskStatus taskStatus = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(taskStatus.getName(), TEST_STATUS);
+    }
+
+    @Test
+    public void updateStatusTest() throws Exception {
         utils.addDefaultStatus()
                 .andExpect(status().isCreated());
         assertEquals(1, taskStatusRepository.count());
 
-        final TaskStatus addedStatus = taskStatusRepository.findAll().get(0);
-        final TaskStatusDto statusDtoForUpdate = new TaskStatusDto("newStatus");
-        final var requestToUpdate = put(STATUS_CONTROLLER_PATH + ID, addedStatus.getId())
-                .content(asJson(statusDtoForUpdate))
+        final Long id = taskStatusRepository.findAll().get(0).getId();
+        final TaskStatusDto expectStatusDto = new TaskStatusDto("newStatus");
+        final var requestToUpdate = put(STATUS_CONTROLLER_PATH + ID, id)
+                .content(asJson(expectStatusDto))
                 .contentType(APPLICATION_JSON);
 
         utils.perform(requestToUpdate, TEST_EMAIL)
                 .andExpect(status().isOk());
 
         final TaskStatus updatedStatus = taskStatusRepository.findAll().get(0);
-        assertEquals(updatedStatus.getName(), statusDtoForUpdate.getName());
+        assertEquals(updatedStatus.getName(), expectStatusDto.getName());
     }
 
     @Test
-    public void deleteStatus() throws Exception {
+    public void deleteStatusTest() throws Exception {
         utils.addDefaultStatus()
                 .andExpect(status().isCreated());
         assertEquals(1, taskStatusRepository.count());

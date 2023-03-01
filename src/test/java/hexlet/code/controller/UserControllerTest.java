@@ -80,7 +80,7 @@ public class UserControllerTest {
 //    }
 
     @Test
-    public void login() throws Exception {
+    public void loginTest() throws Exception {
         utils.regDefaultUser();
         final LoginDto loginDto = new LoginDto(
                 TEST_EMAIL,
@@ -92,7 +92,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void failedLogin() throws Exception {
+    public void failedLoginTest() throws Exception {
         utils.regDefaultUser();
         final LoginDto loginDto = new LoginDto(
                 "wrongEmail",
@@ -104,7 +104,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getUserById() throws Exception {
+    public void getUserByIdTest() throws Exception {
 
         utils.regDefaultUser();
         final User expectedUser = userRepository.findAll().get(0);
@@ -133,7 +133,7 @@ public class UserControllerTest {
 //    }
 
     @Test
-    public void getAllUsers() throws Exception {
+    public void getAllUsersTest() throws Exception {
         utils.regDefaultUser();
 
         final var response = utils.perform(get(USER_CONTROLLER_PATH))
@@ -148,7 +148,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUser() throws Exception {
+    public void updateUserTest() throws Exception {
         utils.regDefaultUser();
         final Long id = userRepository.findByEmail(TEST_EMAIL).get().getId();
 
@@ -172,7 +172,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void deleteUserTest() throws Exception {
         utils.regDefaultUser();
         final User user = userRepository.findAll().get(0);
 
@@ -185,7 +185,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteWrongUser() throws Exception {
+    public void deleteWrongUserTest() throws Exception {
         utils.regDefaultUser();
         UserDto newDto = utils.getTestDto();
         newDto.setEmail("new@email.com");
