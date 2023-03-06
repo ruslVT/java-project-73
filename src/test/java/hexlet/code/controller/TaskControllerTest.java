@@ -117,17 +117,20 @@ public class TaskControllerTest {
         utils.addDefaultTask();
         assertEquals(1, taskRepository.count());
 
-        final Long id = taskRepository.findAll().get(0).getId();
+        final Task task = taskRepository.findAll().get(0);
+        final Long userId = task.getExecutor().getId();
+        final Long statusId = task.getTaskStatus().getId();
         final Long labelId = labelRepository.findAll().get(0).getId();
+
         final TaskDto expectTaskDto = new TaskDto(
                 "newName",
                 "newDescription",
-                1L,
-                1L,
+                userId,
+                statusId,
                 new HashSet<>(Set.of(labelId))
         );
 
-        final var request = put(TASK_CONTROLLER_PATH + ID, id)
+        final var request = put(TASK_CONTROLLER_PATH + ID, task.getId())
                 .content(asJson(expectTaskDto))
                 .contentType(APPLICATION_JSON);
 
