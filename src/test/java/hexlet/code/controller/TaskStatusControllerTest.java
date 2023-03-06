@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static hexlet.code.config.SpringConfigForTest.TEST_PROFILE;
 import static hexlet.code.controller.TaskStatusController.ID;
 import static hexlet.code.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
@@ -83,6 +85,21 @@ public class TaskStatusControllerTest {
         final TaskStatus taskStatus = fromJson(response.getContentAsString(), new TypeReference<>() {
         });
         assertEquals(taskStatus.getName(), TEST_STATUS);
+    }
+
+    @Test
+    public void getAllStatusTest() throws Exception {
+        utils.addDefaultStatus();
+        assertEquals(1, taskStatusRepository.count());
+
+        final var request = get(STATUS_CONTROLLER_PATH);
+        final var response = utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+        final List<TaskStatus> statuses = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(statuses.size(), 1);
     }
 
     @Test

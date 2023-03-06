@@ -73,11 +73,11 @@ public class UserControllerTest {
         utils.perform(request).andExpect(status().isUnprocessableEntity());
     }
 
-//    @Test
-//    public void twiceRegUserFail() throws Exception {
-//        utils.regDefaultUser().andExpect(status().isCreated());
-//        utils.regDefaultUser().andExpect(status().isUnprocessableEntity());
-//    }
+    @Test
+    public void twiceRegUserFail() throws Exception {
+        utils.regDefaultUser().andExpect(status().isCreated());
+        utils.regDefaultUser().andExpect(status().isUnprocessableEntity());
+    }
 
     @Test
     public void loginTest() throws Exception {
@@ -122,15 +122,6 @@ public class UserControllerTest {
         assertThat(expectedUser.getLastName()).isEqualTo(user.getLastName());
         assertThat(expectedUser.getEmail()).isEqualTo(user.getEmail());
     }
-
-//    @Test
-//    public void getUserByIdUnauthorized() throws Exception {
-//        utils.regDefaultUser();
-//        final User user = userRepository.findAll().get(0);
-//
-//        utils.perform(get(USER_CONTROLLER_PATH + ID, user.getId()))
-//                .andExpect(status().isUnauthorized());
-//    }
 
     @Test
     public void getAllUsersTest() throws Exception {

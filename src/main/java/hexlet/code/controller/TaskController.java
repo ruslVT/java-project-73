@@ -1,10 +1,12 @@
 package hexlet.code.controller;
 
+import com.querydsl.core.types.Predicate;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.service.TaskService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,10 +46,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
-                .toList();
+    public List<Task> getAllTasks(@QuerydslPredicate(root = Task.class) Predicate predicate) {
+        return (List<Task>) taskRepository.findAll(predicate);
     }
 
     @GetMapping(ID)

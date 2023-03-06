@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static hexlet.code.config.SpringConfigForTest.TEST_PROFILE;
@@ -29,6 +30,9 @@ import static hexlet.code.controller.TaskController.ID;
 import static hexlet.code.controller.TaskController.TASK_CONTROLLER_PATH;
 import static hexlet.code.utils.TestUtils.TEST_DESCRIPTION;
 import static hexlet.code.utils.TestUtils.TEST_EMAIL;
+import static hexlet.code.utils.TestUtils.TEST_FIRST_NAME;
+import static hexlet.code.utils.TestUtils.TEST_LABEL_NAME;
+import static hexlet.code.utils.TestUtils.TEST_STATUS;
 import static hexlet.code.utils.TestUtils.TEST_TASK_NAME;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
@@ -110,6 +114,106 @@ public class TaskControllerTest {
         });
         assertEquals(task.getName(), TEST_TASK_NAME);
         assertEquals(task.getDescription(), TEST_DESCRIPTION);
+    }
+
+    @Test
+    public void getAllTasks() throws Exception {
+        utils.addDefaultTask();
+        assertEquals(1, taskRepository.count());
+
+        final var request = get(TASK_CONTROLLER_PATH);
+        final var response = utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+        final List<Task> tasks = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+        assertEquals(tasks.size(), 1);
+    }
+
+    @Test
+    public void filterTaskByStatusTest() throws Exception {
+        utils.addDefaultTask();
+        assertEquals(1, taskRepository.count());
+        final Long statusId = taskStatusRepository.findAll().get(0).getId();
+
+        final var requestForOtherStatus = get(TASK_CONTROLLER_PATH + "?taskStatus=100");
+        final var responseForOtherStatus = utils.perform(requestForOtherStatus, TEST_EMAIL)
+                .andExpect(status().isOk()).andReturn().getResponse();
+        final List<Task> filteredTasks1 = fromJson(
+                responseForOtherStatus.getContentAsString(),
+                new TypeReference<>() {
+        });
+        assertEquals(0, filteredTasks1.size());
+
+        final var requestForNeededStatus = get(TASK_CONTROLLER_PATH + "?taskStatus=" + statusId);
+        final var responseForNeededStatus = utils.perform(requestForNeededStatus, TEST_EMAIL)
+                .andExpect(status().isOk()).andReturn().getResponse();
+        final List<Task> filteredTasks2 = fromJson(
+                responseForNeededStatus.getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertEquals(1, filteredTasks2.size());
+        assertEquals(filteredTasks2.get(0).getTaskStatus().getName(), TEST_STATUS);
+    }
+
+    @Test
+    public void filterTaskByExecutorTest() throws Exception {
+        utils.addDefaultTask();
+        assertEquals(1, taskRepository.count());
+        final Long executorId = userRepository.findAll().get(0).getId();
+
+        final var requestForOtherExecutor = get(TASK_CONTROLLER_PATH + "?executorId=100");
+        final var responseForOtherExecutor = utils.perform(requestForOtherExecutor, TEST_EMAIL)
+                .andExpect(status().isOk()).andReturn().getResponse();
+        final List<Task> filteredTasks1 = fromJson(
+                responseForOtherExecutor.getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertEquals(0, filteredTasks1.size());
+
+        final var requestForNeededExecutor = get(TASK_CONTROLLER_PATH + "?executorId=" + executorId);
+        final var responseForNeededExecutor = utils.perform(requestForNeededExecutor, TEST_EMAIL)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+        final List<Task> filteredTasks2 = fromJson(
+                responseForNeededExecutor.getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertEquals(1, filteredTasks2.size());
+        assertEquals(filteredTasks2.get(0).getExecutor().getFirstName(), TEST_FIRST_NAME);
+    }
+
+    @Test
+    public void filterTaskByLabelTest() throws Exception {
+        utils.addDefaultTask();
+        assertEquals(1, taskRepository.count());
+        final Long labelId = labelRepository.findAll().get(0).getId();
+
+        final var requestForOtherLabel = get(TASK_CONTROLLER_PATH + "?labels=100");
+        final var responseForOtherLabel = utils.perform(requestForOtherLabel, TEST_EMAIL)
+                .andExpect(status().isOk()).andReturn().getResponse();
+        final List<Task> filteredTasks1 = fromJson(
+                responseForOtherLabel.getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertEquals(0, filteredTasks1.size());
+
+        final var requestForNeededLabel = get(TASK_CONTROLLER_PATH + "?labels=" + labelId);
+        final var responseForNeededLabel = utils.perform(requestForNeededLabel, TEST_EMAIL)
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+        final List<Task> filteredTasks2 = fromJson(
+                responseForNeededLabel.getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertEquals(1, filteredTasks2.size());
+        assertEquals(filteredTasks2.get(0).getLabels().
+                stream()
+                .findFirst()
+                .get().getName(), TEST_LABEL_NAME);
     }
 
     @Test
