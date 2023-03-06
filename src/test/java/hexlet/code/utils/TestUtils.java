@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.component.JWTHelper;
+import hexlet.code.dto.LabelDto;
 import hexlet.code.dto.TaskDto;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.dto.UserDto;
 import hexlet.code.model.User;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -17,8 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import static hexlet.code.controller.LabelController.LABEL_CONTROLLER_PATH;
 import static hexlet.code.controller.TaskController.TASK_CONTROLLER_PATH;
 import static hexlet.code.controller.TaskStatusController.STATUS_CONTROLLER_PATH;
 import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
@@ -36,6 +41,7 @@ public class TestUtils {
     public static final String TEST_STATUS = "defaultStatus";
     public static final String TEST_TASK_NAME = "taskName";
     public static final String TEST_DESCRIPTION = "taskDescription";
+    public static final String TEST_LABEL_NAME = "testLabel";
 
     private final UserDto testDto = new UserDto(
             TEST_EMAIL,
@@ -61,11 +67,15 @@ public class TestUtils {
     private TaskRepository taskRepository;
 
     @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private JWTHelper jwtHelper;
 
     public void tearDown() {
         taskRepository.deleteAll();
         taskStatusRepository.deleteAll();
+        labelRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -94,12 +104,22 @@ public class TestUtils {
         return perform(request, TEST_EMAIL);
     }
 
+    public ResultActions addDefaultLabel() throws Exception {
+        LabelDto defaultLabelDto = new LabelDto(TEST_LABEL_NAME);
+        final var request = post(LABEL_CONTROLLER_PATH)
+                .content(asJson(defaultLabelDto))
+                .contentType(APPLICATION_JSON);
+
+        return perform(request, TEST_EMAIL);
+    }
+
     public ResultActions addDefaultTask() throws Exception {
         final Long userId = userRepository.findByEmail(TEST_EMAIL).get().getId();
         final Long statusId = taskStatusRepository.findByName(TEST_STATUS).get().getId();
-        final TaskDto dto = new TaskDto(TEST_TASK_NAME, TEST_DESCRIPTION, userId, statusId);
+        final Set<Long> labelIds = new HashSet<>(Set.of(labelRepository.findByName(TEST_LABEL_NAME).get().getId()));
+        final TaskDto defaultTaskDto = new TaskDto(TEST_TASK_NAME, TEST_DESCRIPTION, userId, statusId, labelIds);
         final var request = post(TASK_CONTROLLER_PATH)
-                .content(asJson(dto))
+                .content(asJson(defaultTaskDto))
                 .contentType(APPLICATION_JSON);
 
         return perform(request, TEST_EMAIL);

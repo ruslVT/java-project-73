@@ -1,7 +1,6 @@
 package hexlet.code.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.validation.constraints.NotBlank;
@@ -20,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.Date;
-import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -30,9 +25,8 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Table(name = "tasks")
-public class Task {
+@Table(name = "labels")
+public class Label {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -40,33 +34,14 @@ public class Task {
 
     @NotNull
     @NotBlank
-    @Size(min = 1)
+    @Size(min = 1, max = 100)
     private String name;
-
-    private String description;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "task_status_id")
-    private TaskStatus taskStatus;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
-
-    @ManyToOne
-    @JoinColumn(name = "executor_id")
-    private User executor;
-
-    @ManyToMany()
-    private Set<Label> labels;
 
     @CreationTimestamp
     @Temporal(TIMESTAMP)
     private Date createdAt;
 
-    public Task(final Long id) {
+    public Label(final Long id) {
         this.id = id;
     }
 }

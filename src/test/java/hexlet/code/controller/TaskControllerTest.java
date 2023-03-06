@@ -6,6 +6,7 @@ import hexlet.code.dto.TaskDto;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.model.User;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -19,6 +20,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static hexlet.code.config.SpringConfigForTest.TEST_PROFILE;
 import static hexlet.code.controller.TaskController.ID;
@@ -52,12 +56,16 @@ public class TaskControllerTest {
     private TaskStatusRepository taskStatusRepository;
 
     @Autowired
+    private LabelRepository labelRepository;
+
+    @Autowired
     private TestUtils utils;
 
     @BeforeEach
     public void beforeEach() throws Exception {
         utils.regDefaultUser();
         utils.addDefaultStatus();
+        utils.addDefaultLabel();
     }
 
     @AfterEach
@@ -110,11 +118,13 @@ public class TaskControllerTest {
         assertEquals(1, taskRepository.count());
 
         final Long id = taskRepository.findAll().get(0).getId();
+        final Long labelId = labelRepository.findAll().get(0).getId();
         final TaskDto expectTaskDto = new TaskDto(
                 "newName",
                 "newDescription",
                 1L,
-                1L
+                1L,
+                new HashSet<>(Set.of(labelId))
         );
 
         final var request = put(TASK_CONTROLLER_PATH + ID, id)
