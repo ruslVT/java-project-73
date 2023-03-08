@@ -1,4 +1,4 @@
-package hexlet.code.service;
+package hexlet.code.service.impl;
 
 import hexlet.code.dto.TaskDto;
 import hexlet.code.model.Task;
@@ -7,6 +7,8 @@ import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
+import hexlet.code.service.TaskService;
+import hexlet.code.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
