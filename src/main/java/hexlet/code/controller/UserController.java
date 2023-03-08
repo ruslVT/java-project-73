@@ -1,5 +1,6 @@
 package hexlet.code.controller;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.dto.UserDto;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
@@ -39,6 +40,8 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
 
+    private final Rollbar rollbar;
+
     @Operation(summary = "Create new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created"),
@@ -47,6 +50,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(CREATED)
     public User registerNewUser(@RequestBody @Valid final UserDto userDto) {
+        rollbar.debug("Here is some debug message");
         return userService.createNewUser(userDto);
     }
 
