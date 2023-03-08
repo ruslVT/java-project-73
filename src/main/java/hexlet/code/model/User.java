@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -36,12 +37,15 @@ public class User {
     private String email;
 
     @NotBlank
+    @Size(min = 1, max = 50)
     private String firstName;
 
     @NotBlank
+    @Size(min = 1, max = 50)
     private String lastName;
 
     @NotBlank
+    @Size(min = 3, max = 100)
     @JsonIgnore
     private String password;
 
