@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -68,6 +69,17 @@ public class TaskStatusControllerTest {
 
         final TaskStatus taskStatus = taskStatusRepository.findAll().get(0);
         assertEquals(taskStatus.getName(), TEST_STATUS);
+    }
+
+    @Test
+    public void createInvalidStatusTest() throws Exception {
+        TaskStatusDto invalidStatus = new TaskStatusDto();
+        final var request = post(STATUS_CONTROLLER_PATH)
+                .content(asJson(invalidStatus))
+                .contentType(APPLICATION_JSON);
+
+        utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -133,6 +145,19 @@ public class TaskStatusControllerTest {
                 .andExpect(status().isOk());
 
         assertEquals(0, taskStatusRepository.count());
+    }
+
+    @Test
+    public void deleteWhenStatusAssociatedWithTaskTest() throws Exception {
+        utils.addDefaultLabel();
+        utils.addDefaultStatus();
+        utils.addDefaultTask();
+
+        final Long statusId = taskStatusRepository.findAll().get(0).getId();
+        final var request = delete(STATUS_CONTROLLER_PATH + ID, statusId);
+        utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isUnprocessableEntity());
+
     }
 
 

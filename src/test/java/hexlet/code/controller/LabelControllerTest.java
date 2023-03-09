@@ -30,6 +30,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
@@ -62,6 +63,16 @@ public class LabelControllerTest {
                 .andExpect(status().isCreated());
         assertEquals(1, labelRepository.count());
         assertEquals(labelRepository.findAll().get(0).getName(), TEST_LABEL_NAME);
+    }
+
+    @Test
+    public void createInvalidLabelTest() throws Exception {
+        LabelDto invalidLabel = new LabelDto();
+        final var request = post(LABEL_CONTROLLER_PATH)
+                .content(asJson(invalidLabel))
+                .contentType(APPLICATION_JSON);
+        utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -124,6 +135,18 @@ public class LabelControllerTest {
         utils.perform(request, TEST_EMAIL)
                         .andExpect(status().isOk());
         assertEquals(0, labelRepository.count());
+    }
+
+    @Test
+    public void deleteWhenLabelAssociatedWithTaskTest() throws Exception {
+        utils.addDefaultLabel();
+        utils.addDefaultStatus();
+        utils.addDefaultTask();
+
+        final Long labelId = labelRepository.findAll().get(0).getId();
+        final var request = delete(LABEL_CONTROLLER_PATH + ID, labelId);
+        utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isUnprocessableEntity());
     }
 
 

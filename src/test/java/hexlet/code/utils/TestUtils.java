@@ -37,6 +37,7 @@ public class TestUtils {
     public static final String TEST_FIRST_NAME = "testFName";
     public static final String TEST_LAST_NAME = "testLName";
     public static final String TEST_EMAIL = "email@yandex.ru";
+    public static final String TEST_WRONG_EMAIL = "wrong@yandex.ru";
     public static final String TEST_PASSWORD = "testPassword";
     public static final String TEST_STATUS = "defaultStatus";
     public static final String TEST_TASK_NAME = "taskName";

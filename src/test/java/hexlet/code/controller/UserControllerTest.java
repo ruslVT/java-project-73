@@ -187,4 +187,18 @@ public class UserControllerTest {
                 .andExpect(status().isForbidden());
         assertEquals(2, userRepository.count());
     }
+
+    @Test
+    public void deleteWhenUserAssociatedWithTaskTest() throws Exception {
+        utils.regDefaultUser();
+        utils.addDefaultStatus();
+        utils.addDefaultLabel();
+        utils.addDefaultTask();
+
+        final Long userId = userRepository.findAll().get(0).getId();
+        final var request = delete(USER_CONTROLLER_PATH + ID, userId);
+        utils.perform(request, TEST_EMAIL)
+                .andExpect(status().isUnprocessableEntity());
+
+    }
 }

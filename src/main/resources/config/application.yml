@@ -23,3 +23,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+environments:
+  rollbar:
+    token: ${ROLLBAR_TOKEN}
