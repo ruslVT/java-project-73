@@ -23,6 +23,8 @@ import static hexlet.code.config.security.SecurityConfig.LOGIN;
 import static hexlet.code.controller.UserController.ID;
 import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
 import static hexlet.code.utils.TestUtils.TEST_EMAIL;
+import static hexlet.code.utils.TestUtils.TEST_FIRST_NAME;
+import static hexlet.code.utils.TestUtils.TEST_LAST_NAME;
 import static hexlet.code.utils.TestUtils.TEST_PASSWORD;
 import static hexlet.code.utils.TestUtils.asJson;
 import static hexlet.code.utils.TestUtils.fromJson;
@@ -83,6 +85,8 @@ public class UserControllerTest {
     public void loginTest() throws Exception {
         utils.regDefaultUser();
         final LoginDto loginDto = new LoginDto(
+                TEST_FIRST_NAME,
+                TEST_LAST_NAME,
                 TEST_EMAIL,
                 TEST_PASSWORD
         );
@@ -95,6 +99,8 @@ public class UserControllerTest {
     public void failedLoginTest() throws Exception {
         utils.regDefaultUser();
         final LoginDto loginDto = new LoginDto(
+                "wrongFirstName",
+                "wrongLastName",
                 "wrongEmail",
                 "wrongPass"
         );
