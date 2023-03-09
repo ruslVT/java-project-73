@@ -96,4 +96,5 @@ public class TaskController {
     public void deleteTask(@PathVariable final Long id) {
         taskRepository.deleteById(id);
     }
+
 }

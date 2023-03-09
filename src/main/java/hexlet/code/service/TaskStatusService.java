@@ -7,4 +7,5 @@ public interface TaskStatusService {
 
     TaskStatus createNewTaskStatus(TaskStatusDto dto);
     TaskStatus updateTaskStatus(long id, TaskStatusDto dto);
+
 }

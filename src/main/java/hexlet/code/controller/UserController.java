@@ -30,6 +30,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @AllArgsConstructor
 @RequestMapping("${base-url}" + USER_CONTROLLER_PATH)
 public class UserController {
+
     public static final String USER_CONTROLLER_PATH = "/users";
     public static final String ID = "/{id}";
     private static final String ONLY_OWNER_BY_ID = """
@@ -96,4 +97,5 @@ public class UserController {
     public void deleteUser(@PathVariable final long id) {
         userRepository.deleteById(id);
     }
+
 }

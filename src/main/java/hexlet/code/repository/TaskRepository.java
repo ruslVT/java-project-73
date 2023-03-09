@@ -17,4 +17,5 @@ public interface TaskRepository extends
     @Override
     default void customize(QuerydslBindings bindings, QTask qTask) {
     }
+
 }

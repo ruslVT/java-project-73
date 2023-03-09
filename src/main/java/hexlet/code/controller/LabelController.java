@@ -89,4 +89,5 @@ public class LabelController {
     public void deleteLabel(@PathVariable Long id) {
         labelRepository.deleteById(id);
     }
+
 }

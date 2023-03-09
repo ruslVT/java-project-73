@@ -31,6 +31,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @SecurityRequirement(name = "jwtIn")
 @RequestMapping("${base-url}" + STATUS_CONTROLLER_PATH)
 public class TaskStatusController {
+
     public static final String STATUS_CONTROLLER_PATH = "/statuses";
     public static final String ID = "/{id}";
     private final TaskStatusRepository taskStatusRepository;

@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // Авторизации через токен в свагер
 @SecurityScheme(name = "jwtIn", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 public class AppApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(AppApplication.class, args);
     }
@@ -21,4 +22,5 @@ public class AppApplication {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

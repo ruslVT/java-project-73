@@ -205,6 +205,6 @@ public class UserControllerTest {
         final var request = delete(USER_CONTROLLER_PATH + ID, userId);
         utils.perform(request, TEST_EMAIL)
                 .andExpect(status().isUnprocessableEntity());
-
     }
+
 }

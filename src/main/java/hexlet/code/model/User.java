@@ -56,4 +56,5 @@ public class User {
     public User(final Long id) {
         this.id = id;
     }
+
 }

@@ -42,6 +42,7 @@ public class LabelControllerTest {
 
     @Autowired
     private LabelRepository labelRepository;
+
     @Autowired
     private TestUtils utils;
 
@@ -148,6 +149,5 @@ public class LabelControllerTest {
         utils.perform(request, TEST_EMAIL)
                 .andExpect(status().isUnprocessableEntity());
     }
-
 
 }

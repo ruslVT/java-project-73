@@ -66,4 +66,5 @@ public class BaseExceptionHandler {
     public String userNitFoundExceptionHandler(UsernameNotFoundException exception) {
         return exception.getMessage();
     }
+
 }

@@ -29,4 +29,5 @@ public class RollbarConfig {
                 .environment(activeProfile)
                 .build();
     }
+
 }

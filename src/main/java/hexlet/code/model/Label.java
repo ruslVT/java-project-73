@@ -44,4 +44,5 @@ public class Label {
     public Label(final Long id) {
         this.id = id;
     }
+
 }

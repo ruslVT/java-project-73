@@ -26,4 +26,5 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         taskStatus.setName(statusDto.getName());
         return taskStatusRepository.save(taskStatus);
     }
+
 }

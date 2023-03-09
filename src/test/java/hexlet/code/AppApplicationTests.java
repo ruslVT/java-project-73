@@ -10,4 +10,5 @@ class AppApplicationTests {
     void testInit() {
         assertThat(true).isTrue();
     }
+
 }
