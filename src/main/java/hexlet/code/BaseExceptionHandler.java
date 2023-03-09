@@ -63,8 +63,7 @@ public class BaseExceptionHandler {
 
     @ResponseStatus(UNAUTHORIZED)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public String userNotFoundExceptionHandler(UsernameNotFoundException exception) {
+    public String userNitFoundExceptionHandler(UsernameNotFoundException exception) {
         return exception.getMessage();
     }
-
 }
