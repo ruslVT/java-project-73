@@ -42,7 +42,6 @@ public class TaskServiceImpl implements TaskService {
         task.setName(newTask.getName());
         task.setDescription(newTask.getDescription());
         task.setTaskStatus(newTask.getTaskStatus());
-        task.setAuthor(newTask.getAuthor());
         task.setExecutor(newTask.getExecutor());
         task.setLabels(newTask.getLabels());
     }

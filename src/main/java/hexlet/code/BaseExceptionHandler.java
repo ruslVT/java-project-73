@@ -52,7 +52,7 @@ public class BaseExceptionHandler {
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public String validationExceptionsHandler(DataIntegrityViolationException exception) {
-        return exception.getCause().getCause().getMessage();
+        return exception.getCause().getMessage();
     }
 
     @ResponseStatus(FORBIDDEN)

@@ -80,7 +80,6 @@ public class TaskController {
             @ApiResponse(responseCode = "403", description = "Incorrect owner trying updated data")
     })
     @PutMapping(ID)
-    @PreAuthorize(ONLY_AUTHOR_BY_ID)
     public Task updateTask(@PathVariable final Long id, @RequestBody @Valid final TaskDto taskDto) {
         return taskService.updateTask(id, taskDto);
     }
