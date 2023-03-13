@@ -3,8 +3,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/62b4fe1dd5166f53d05a/maintainability)](https://codeclimate.com/github/ruslVT/java-project-73/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/62b4fe1dd5166f53d05a/test_coverage)](https://codeclimate.com/github/ruslVT/java-project-73/test_coverage)
 
-## [Task manager](https://java-project-73-production-0377.up.railway.app/)
-***
+### [Task manager](https://java-project-73-production-0377.up.railway.app/)
+
 ### Simply mini web application with backend and front.
  Allows you to set tasks, assign performers and change their statuses. Registration and authentication are required to work with the system.
 ***
